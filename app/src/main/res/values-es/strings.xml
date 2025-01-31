@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EQUIPO8MOVILES</string>
+    <string name="jugar">JUGAR</string>
+    <string name="choose_the_difficulty">Choose the difficulty:</string>
+    <string name="dif_dificil">Difícil</string>
+    <string name="dif_moderada">Moderada</string>
+    <string name="dif_facil">Fácil</string>
+</resources>

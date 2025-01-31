@@ -1,0 +1,30 @@
+package com.javt.equipo8moviles.view
+
+import android.R
+import android.os.Bundle
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
+import com.javt.equipo8moviles.databinding.ActivityMainBinding
+import com.javt.equipo8moviles.model.Dificultad
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        // CONFIGURAR SPINNER
+        val spinner=binding.spinner
+        val dificultades = Dificultad.entries.map { it.name }
+        val adapter = ArrayAdapter(
+                this,
+        R.layout.simple_spinner_item, // Layout por defecto
+        dificultades // Lista de dificultades
+        )
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item) // Layout por defecto
+        spinner.adapter = adapter
+
+    }
+}

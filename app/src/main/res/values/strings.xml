@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">EQUIPO8MOVILES</string>
+    <string name="jugar">PLAY</string>
+    <string name="choose_the_difficulty">Choose the difficulty:</string>
+    <string name="dif_dificil">Hard</string>
+    <string name="dif_moderada">Moderate</string>
+    <string name="dif_facil">Easy</string>
+</resources>
