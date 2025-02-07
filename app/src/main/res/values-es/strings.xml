@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EQUIPO8MOVILES</string>
+
     <string name="jugar">JUGAR</string>
     <string name="choose_the_difficulty">Choose the difficulty:</string>
     <string name="dif_dificil">Difícil</string>
     <string name="dif_moderada">Moderada</string>
     <string name="dif_facil">Fácil</string>
+
+
+        <string name="app_name">Adivina Dónde Estoy</string>
+        <string name="about_title">Juego: Adivina Dónde Estoy</string>
+        <string name="version">Versión 1.0</string>
+        <string name="authors">Autores: [Tu Nombre] y [Tu Compañero]</string>
+        <string name="description">
+        Este juego ha sido desarrollado como parte del reto del módulo de
+        Programación Multimedia en el IES Maestre de Calatrava.
+    </string>
+        <string name="btn_back">Volver</string>
+        <string name="menu_about">Acerca de</string>
+
+
 </resources>
