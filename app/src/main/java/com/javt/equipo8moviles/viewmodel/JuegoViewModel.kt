@@ -19,9 +19,10 @@ class JuegoViewModel : ViewModel() {
     private val _imagenesAcertadas = MutableLiveData<List<Imagen>>(emptyList())
     val imagenesAcertadas: LiveData<List<Imagen>> get() = _imagenesAcertadas
 
+
     private val imagenesFacil = listOf(
-        Imagen("paella", 40.4168, -3.7038, "Mallorca"),
-        Imagen("tartasantiago", 42.8782, -8.5448, "Santiago de Compostela")
+        Imagen("paella", 39.4699, -0.3763, "Valencia"),
+        Imagen("tartasantiago", 42.8806, -8.5456, "Santiago de Compostela")
     )
 
     private val imagenesDificil = listOf(
@@ -39,8 +40,8 @@ class JuegoViewModel : ViewModel() {
 
     fun obtenerImagenesSegunDificultad(nivel: Int): List<Imagen> {
         return when (nivel) {
-            1 -> imagenesFacil
-            2 -> imagenesDificil
+            0 -> imagenesFacil
+            1 -> imagenesDificil
             else -> imagenesFacil
         }
     }
