@@ -5,5 +5,13 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.EQUIPO8MOVILES" parent="Base.Theme.EQUIPO8MOVILES" />
+    <style name="Theme.EQUIPO8MOVILES" parent="Base.Theme.EQUIPO8MOVILES">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/colorBackground</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+        <item name="android:fontFamily">@font/comforta_med</item>
+    </style>
 </resources>

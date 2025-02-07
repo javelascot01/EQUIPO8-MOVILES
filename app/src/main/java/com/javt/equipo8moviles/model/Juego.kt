@@ -1,11 +1,9 @@
 package com.javt.equipo8moviles.model
 
-data class Lugar(val nombre: String, val latitud: Double, val longitud: Double)
-
 class Juego {
     private var intentosRestantes: Int = 5
     private var puntuacion: Int = 0
-    private val lugaresAcertados = mutableListOf<LugarAcertado>()
+    private val imagenesAcertadas = mutableListOf<Imagen>()
 
     fun resetIntentos(nivel: Int) {
         intentosRestantes = when (nivel) {
@@ -15,11 +13,11 @@ class Juego {
         }
     }
 
-    fun registrarIntento(acierto: Boolean, tiempo: Long, lugar: Lugar) {
+    fun registrarIntento(acierto: Boolean, tiempo: Long, imagen: Imagen) {
         if (acierto) {
             val puntos = calcularPuntos()
             puntuacion += puntos
-            lugaresAcertados.add(LugarAcertado(lugar, tiempo, puntos))
+            imagenesAcertadas.add(imagen)
             resetIntentos(1)  // Reiniciar intentos para la siguiente imagen
         } else {
             intentosRestantes--
@@ -39,7 +37,5 @@ class Juego {
 
     fun obtenerPuntuacion(): Int = puntuacion
     fun obtenerIntentosRestantes(): Int = intentosRestantes
-    fun obtenerLugaresAcertados(): List<LugarAcertado> = lugaresAcertados
+    fun obtenerImagenesAcertadas(): List<Imagen> = imagenesAcertadas
 }
-
-data class LugarAcertado(val lugar: Lugar, val tiempo: Long, val puntos: Int)

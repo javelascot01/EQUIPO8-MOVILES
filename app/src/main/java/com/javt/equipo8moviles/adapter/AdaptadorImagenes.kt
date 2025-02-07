@@ -1,16 +1,18 @@
 package com.javt.equipo8moviles.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.holder.ImagenesViewHolder
+import com.javt.equipo8moviles.model.Imagen
 
-class AdaptadorImagenes(private val imageNames: List<String>) :
+class AdaptadorImagenes(private val imagenes: List<Imagen>) :
     RecyclerView.Adapter<ImagenesViewHolder>() {
-    private var data: List<String>
+    private var data: List<Imagen>
     init {
-        data = imageNames
+        data = imagenes
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
             ImagenesViewHolder {
@@ -27,8 +29,14 @@ class AdaptadorImagenes(private val imageNames: List<String>) :
         //accedo al imageView, por el nombre
         val imageResourceId =
             holder.itemView.context.resources.getIdentifier(
-                imagenName,"drawable",holder.itemView.context.packageName)
-        holder.imagenView.setImageResource(imageResourceId)
+                imagenName.nombre,"drawable",holder.itemView.context.packageName)
+
+
+        if (imageResourceId != 0) {
+            holder.imagenView.setImageResource(imageResourceId)
+        } else {
+            Log.e("AdaptadorImagenes", "Image resource not found for name: ${imagenName.nombre}")
+        }
     }
     override fun getItemCount(): Int {
         return data.size

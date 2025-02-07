@@ -1,6 +1,7 @@
 package com.javt.equipo8moviles.view
 
 import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         // CONFIGURAR SPINNER
         val spinner=binding.spinner
-        val dificultades = Dificultad.entries.map { it.name }
+        val dificultades = Dificultad.entries.map { it.aString(this) }
         val adapter = ArrayAdapter(
                 this,
         R.layout.simple_spinner_item, // Layout por defecto
@@ -25,6 +26,14 @@ class MainActivity : AppCompatActivity() {
         )
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item) // Layout por defecto
         spinner.adapter = adapter
+
+        // Start PantallaImagenes with the selected difficulty
+        binding.btnJugar.setOnClickListener {
+            val selectedDifficulty = spinner.selectedItemPosition
+            val intent = Intent(this, PantallaImagenes::class.java)
+            intent.putExtra("difficulty", selectedDifficulty)
+            startActivity(intent)
+        }
 
     }
 }
