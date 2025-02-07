@@ -6,16 +6,16 @@
     <string name="dif_facil">Easy</string>
 
 
-        <string name="app_name">Guess Where I Am</string>
-        <string name="about_title">Game: Guess Where I Am</string>
-        <string name="version">Version 1.0</string>
-        <string name="authors">Authors: [Your Name] and [Your Partner]</string>
-        <string name="description">
+    <string name="app_name">Guess Where I Am</string>
+    <string name="about_title">Game: Guess Where I Am</string>
+    <string name="version">Version 1.0</string>
+    <string name="authors">Authors: [Your Name] and [Your Partner]</string>
+    <string name="description">
         This game was developed as part of the challenge for the
         Multimedia Programming module at IES Maestre de Calatrava.
     </string>
-        <string name="btn_back">Back</string>
-        <string name="menu_about">About</string>
+    <string name="btn_back">Back</string>
+    <string name="menu_about">About</string>
 
 
 </resources>
