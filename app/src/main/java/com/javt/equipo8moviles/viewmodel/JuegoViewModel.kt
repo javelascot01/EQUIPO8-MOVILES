@@ -13,12 +13,11 @@ class JuegoViewModel : ViewModel() {
     private val _puntuacion = MutableLiveData(0)
     val puntuacion: LiveData<Int> get() = _puntuacion
 
-    private val _intentosRestantes = MutableLiveData(5)
-    val intentosRestantes: LiveData<Int> get() = _intentosRestantes
+    private val _intentos = MutableLiveData(3) // Número máximo de intentos
+    val intentos: LiveData<Int> get() = _intentos
 
-    private val _imagenesAcertadas = MutableLiveData<List<Imagen>>(emptyList())
-    val imagenesAcertadas: LiveData<List<Imagen>> get() = _imagenesAcertadas
-
+    val _imagenesAcertadas = mutableListOf<Imagen>()
+    val imagenesAcertadas: LiveData<List<Imagen>> get() = MutableLiveData(_imagenesAcertadas)
 
     private val imagenesFacil = listOf(
         Imagen("paella", 39.4699, -0.3763, "Valencia"),
@@ -35,7 +34,7 @@ class JuegoViewModel : ViewModel() {
 
     fun iniciarJuego(nivel: Int) {
         juego.resetIntentos(nivel)
-        _intentosRestantes.value = juego.obtenerIntentosRestantes()
+        _intentos.value = juego.obtenerIntentosRestantes()
     }
 
     fun obtenerImagenesSegunDificultad(nivel: Int): List<Imagen> {
@@ -46,10 +45,27 @@ class JuegoViewModel : ViewModel() {
         }
     }
 
-    fun procesarIntento(acierto: Boolean, tiempo: Long, imagen: Imagen) {
-        juego.registrarIntento(acierto, tiempo, imagen)
-        _puntuacion.value = juego.obtenerPuntuacion()
-        _intentosRestantes.value = juego.obtenerIntentosRestantes()
-        _imagenesAcertadas.value = juego.obtenerImagenesAcertadas()
+    fun procesarIntento(acierto: Boolean, timestamp: Long, imagen: Imagen) {
+        if (_intentos.value!! > 0) {
+            if (acierto) {
+                _puntuacion.value = _puntuacion.value!! + 1
+            } else {
+                _intentos.value = (_intentos.value!! - 1).coerceAtLeast(0) // Evita valores negativos
+            }
+        }
+    }
+    fun juegoTerminado(): Boolean {
+        return _intentos.value == 0
+    }
+    // Método para registrar una imagen acertada
+    fun agregarImagenAcertada(imagen: Imagen) {
+        if (!_imagenesAcertadas.contains(imagen)) {
+            _imagenesAcertadas.add(imagen)
+        }
+    }
+
+    // Verificar si una imagen ya ha sido acertada
+    fun imagenYaAcertada(imagen: Imagen): Boolean {
+        return _imagenesAcertadas.contains(imagen)
     }
 }

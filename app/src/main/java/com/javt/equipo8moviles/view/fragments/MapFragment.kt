@@ -1,20 +1,16 @@
 package com.javt.equipo8moviles.view.fragments
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Rect
 import android.os.Bundle
-import android.util.DisplayMetrics
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.javt.equipo8moviles.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.javt.equipo8moviles.databinding.FragmentMapBinding
+import com.javt.equipo8moviles.model.Imagen
+import com.javt.equipo8moviles.viewmodel.JuegoViewModel
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -23,185 +19,170 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
-import org.osmdroid.views.overlay.ScaleBarOverlay
-import org.osmdroid.views.overlay.compass.CompassOverlay
-import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+import kotlin.math.cos
+import kotlin.math.sin
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MapFragment : Fragment(), MapEventsReceiver {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var marker: Marker? = null
-    private  var circleOverlay: Polygon? = null
-    private val MULTIPLE_PERMISSION_REQUEST_CODE: Int = 4
+
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
     private lateinit var mapView: MapView
+    private var marker: Marker? = null
+    private var circleOverlay: Polygon? = null
+    private val viewModel: JuegoViewModel by activityViewModels()
 
-    private lateinit var binding: FragmentMapBinding
+    private var imagenActual: Imagen? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    companion object {
+        private const val ARG_NOMBRE_IMAGEN = "nombre_imagen"
+
+        fun newInstance(nombreImagen: String): MapFragment {
+            return MapFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_NOMBRE_IMAGEN, nombreImagen)
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        //handle permissions first, before map is created.
-        checkPermissionsState()
-        //important! set your user agent to prevent getting banned from the osm servers
-        Configuration.getInstance().setUserAgentValue(requireContext().getPackageName())
-
-
-
-        binding= FragmentMapBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
         mapView = binding.mapView
         setupMap()
         return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-    private fun checkPermissionsState() {
-        val fineLocationPermissionCheck = ContextCompat.checkSelfPermission(
-            this.requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-
-        if (fineLocationPermissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this.requireActivity(),
-                arrayOf<String>(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                ),
-                MULTIPLE_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            MULTIPLE_PERMISSION_REQUEST_CODE -> {
-                if (grantResults.size > 0) {
-                    var somePermissionWasDenied = false
-                    for (result in grantResults) {
-                        if (result == PackageManager.PERMISSION_DENIED) {
-                            somePermissionWasDenied = true
-                        }
-                    }
-                    if (somePermissionWasDenied) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Cant load maps without all the permissions granted",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Cant load maps without all the permissions granted",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                return
-            }
-
-        }
-    }
     private fun setupMap() {
-        // Configurar el mapa
-        mapView.setClickable(true)
-        mapView.setDestroyMode(false)
+        Configuration.getInstance().load(requireContext(), requireActivity().getPreferences(0))
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         mapView.setMultiTouchControls(true)
-        mapView.getLocalVisibleRect(Rect())
+        mapView.controller.setZoom(5.0)
+        mapView.overlays.add(MapEventsOverlay(this))
 
-        // Centrar el mapa en España
-        val startPoint = GeoPoint(40.4168, -3.7038) // Madrid, España
-        val mapController = mapView.controller
-        mapController.setZoom(6.8) // Nivel de zoom adecuado para ver España
-        mapController.setCenter(startPoint)
-        // Añadir MapEventsOverlay
-        val mapEventsOverlay = MapEventsOverlay(this)
-        mapView.overlays.add(mapEventsOverlay)
+        val nombreImagen = arguments?.getString(ARG_NOMBRE_IMAGEN)
+        imagenActual = viewModel.obtenerImagenesSegunDificultad(0).find { it.nombre == nombreImagen }
 
-        // Brújula
-//        val compassOverlay = CompassOverlay(requireContext(), InternalCompassOrientationProvider(requireContext()), mapView)
-//        compassOverlay.enableCompass()
-//        mapView.overlays.add(compassOverlay)
-
-        // Barra de escala
-//        val dm: DisplayMetrics = this.resources.displayMetrics
-//        val scaleBarOverlay = ScaleBarOverlay(mapView)
-//        scaleBarOverlay.setCentred(true)
-//        scaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 40)
-//        mapView.overlays.add(scaleBarOverlay)
+        // Verificar si la imagen ya ha sido acertada
+        if (imagenActual != null && viewModel.imagenYaAcertada(imagenActual!!)) {
+            Toast.makeText(requireContext(), "Ya acertaste esta imagen", Toast.LENGTH_SHORT).show()
+            // Si ya se ha acertado, puedes cerrar el fragmento o hacer lo que necesites
+            requireActivity().supportFragmentManager.beginTransaction()
+                .remove(this@MapFragment)
+                .commit()
+        }
     }
 
-
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        if (p == null) return false
+        if (p == null || imagenActual == null) return false
 
-        // Eliminar marcador y círculo anteriores
+        // Verificar si la imagen ya ha sido acertada
+        if (viewModel.imagenYaAcertada(imagenActual!!)) {
+            Toast.makeText(requireContext(), "Ya acertaste esta imagen", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
         marker?.let { mapView.overlays.remove(it) }
         circleOverlay?.let { mapView.overlays.remove(it) }
 
-        // Crear y agregar marcador
         marker = Marker(mapView).apply {
             position = p
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         }
         mapView.overlays.add(marker)
 
-        // Dibujar círculo de 100 km
         circleOverlay = createCircle(p, 100000.0)
         mapView.overlays.add(circleOverlay)
 
-        mapView.invalidate() // Refrescar mapa
+        val distancia = calcularDistancia(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
+        val acierto = distancia <= 100000.0
+
+        viewModel.procesarIntento(acierto, System.currentTimeMillis(), imagenActual!!)
+
+        requireActivity().runOnUiThread {
+            val mensaje = if (acierto) {
+                // Mueve la cámara al punto de la imagen
+                val puntoAcierto = GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud)
+                mapView.controller.setCenter(puntoAcierto)  // Centra la cámara en el punto
+                mapView.controller.setZoom(7.0) // Ajusta el nivel de zoom
+
+                // Registrar la imagen como acertada
+                viewModel.agregarImagenAcertada(imagenActual!!)
+
+                "¡Correcto! Era ${imagenActual!!.lugar}"
+            } else {
+                val pista = obtenerPista(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
+                "Fallaste. Prueba más al $pista"
+            }
+            Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show()
+
+            // Si se acaban los intentos, cerrar el fragmento
+            if (viewModel.juegoTerminado()) {
+                Toast.makeText(requireContext(), "Juego terminado, sin intentos restantes.", Toast.LENGTH_LONG).show()
+
+                // Cierra la actividad de PantallaImagenes y vuelve a la principal
+                requireActivity().finish()
+            }
+        }
+
+        mapView.invalidate()
+
         return true
     }
+
+    override fun longPressHelper(p: GeoPoint?): Boolean {
+        return false
+    }
+
     private fun createCircle(center: GeoPoint, radius: Double): Polygon {
         return Polygon().apply {
             points = Polygon.pointsAsCircle(center, radius)
-            fillColor = 0x40FF0000 // Rojo semitransparente
+            fillColor = 0x40FF0000
             strokeColor = Color.RED
             strokeWidth = 3f
         }
     }
 
+    private fun calcularDistancia(p1: GeoPoint, p2: GeoPoint): Double {
+        // Formula de Haversine para calcular la distancia entre dos puntos
+        val r = 6371000
+        val dLat = Math.toRadians(p2.latitude - p1.latitude)
+        val dLon = Math.toRadians(p2.longitude - p1.longitude)
 
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        return false
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(p1.latitude)) * cos(Math.toRadians(p2.latitude)) *
+                Math.sin(dLon / 2) * sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+        return r * c
+    }
+
+    private fun obtenerPista(userPoint: GeoPoint, correctPoint: GeoPoint): String {
+        // Calculamos la diferencia entre latitudes y longitudes
+        val latitudDiferencia = Math.abs(userPoint.latitude - correctPoint.latitude)
+        val longitudDiferencia = Math.abs(userPoint.longitude - correctPoint.longitude)
+
+        // Comparamos las diferencias
+        return if (latitudDiferencia > longitudDiferencia) {
+            // Si la diferencia de latitudes es mayor
+            if (userPoint.latitude < correctPoint.latitude) {
+                "norte"
+            } else {
+                "sur"
+            }
+        } else {
+            // Si la diferencia de longitudes es mayor
+            if (userPoint.longitude < correctPoint.longitude) {
+                "este"
+            } else {
+                "oeste"
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

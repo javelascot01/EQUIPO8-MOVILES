@@ -7,8 +7,8 @@ class Juego {
 
     fun resetIntentos(nivel: Int) {
         intentosRestantes = when (nivel) {
-            1 -> 5  // Fácil
-            2 -> 3  // Difícil
+            0 -> 5  // Fácil
+            1 -> 3  // Difícil
             else -> 5
         }
     }
