@@ -10,7 +10,7 @@ import com.javt.equipo8moviles.holder.ImagenesViewHolder
 import com.javt.equipo8moviles.model.Imagen
 import com.javt.equipo8moviles.view.ActivityJuego
 
-class AdaptadorImagenes(private val imagenes: List<Imagen>) : RecyclerView.Adapter<ImagenesViewHolder>() {
+class AdaptadorImagenes(private val imagenes: List<Imagen>, private val onImageClick: (Imagen) -> Unit) : RecyclerView.Adapter<ImagenesViewHolder>() {
     private var data: List<Imagen>
     init {
         data = imagenes
@@ -22,8 +22,6 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>) : RecyclerView.Adapt
         return ImagenesViewHolder(layoutInflater.inflate(
             R.layout.imagen_item,
             parent, false))
-
-
     }
     override fun onBindViewHolder(holder: ImagenesViewHolder,
                                   position: Int) {
@@ -41,11 +39,7 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>) : RecyclerView.Adapt
             Log.e("AdaptadorImagenes", "Image resource not found for name: ${imagenName.nombre}")
         }
         holder.itemView.setOnClickListener {
-            // AL HACER CLICK EN UNA IMAGEN SE INICIA EL JUEGO CON ESA IMAGEN ActivityJuego
-            // Se envía el nombre de la imagen seleccionada
-            val intent = Intent(holder.itemView.context, ActivityJuego::class.java)
-            intent.putExtra("nombreImagen", imagenName.nombre)
-            holder.itemView.context.startActivity(intent)
+            onImageClick(imagenName) // Llamamos a la función de callback con la imagen seleccionada
         }
     }
 

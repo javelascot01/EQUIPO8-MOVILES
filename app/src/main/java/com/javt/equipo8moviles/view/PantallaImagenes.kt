@@ -1,13 +1,19 @@
 package com.javt.equipo8moviles.view
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.adapter.AdaptadorImagenes
 import com.javt.equipo8moviles.databinding.ActivityMainBinding
 import com.javt.equipo8moviles.databinding.ActivityPantallaImagenesBinding
 import com.javt.equipo8moviles.model.Dificultad
+import com.javt.equipo8moviles.model.Imagen
+import com.javt.equipo8moviles.view.fragments.MapFragment
 import com.javt.equipo8moviles.viewmodel.JuegoViewModel
 
 class PantallaImagenes : AppCompatActivity() {
@@ -34,7 +40,17 @@ class PantallaImagenes : AppCompatActivity() {
         snapHelper.attachToRecyclerView(binding.rvImages)
 
 
-       binding.rvImages.adapter =
-            AdaptadorImagenes(viewModel.obtenerImagenesSegunDificultad(difficulty.ordinal))
+        binding.rvImages.adapter = AdaptadorImagenes(viewModel.obtenerImagenesSegunDificultad(difficulty.ordinal)) { imagen ->
+            onImageSelected(imagen)
+        }
+    }
+    private fun onImageSelected(imagen: Imagen) {
+        Log.d("ImageSelected", "Imagen seleccionada: ${imagen.nombre}")
+        if (!isFinishing) {
+            val fragment: Fragment = MapFragment.newInstance(imagen.nombre, "")
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commitAllowingStateLoss()
+        }
     }
 }
