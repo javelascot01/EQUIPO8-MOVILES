@@ -1,5 +1,7 @@
 package com.javt.equipo8moviles.model
 
+import android.util.Log
+
 class Juego {
     private var intentosRestantes: Int = 5
     private var puntuacion: Int = 0
@@ -18,6 +20,9 @@ class Juego {
             puntuacion += calcularPuntos()
             if (!imagenesAcertadas.contains(imagen)) {
                 imagenesAcertadas.add(imagen)
+                Log.e("Juego", "Imagen añadida: ${imagen.nombre}, total: ${imagenesAcertadas.size}")
+            } else {
+                Log.e("Juego", "La imagen ya estaba acertada: ${imagen.nombre}")
             }
         } else {
             intentosRestantes--
@@ -37,6 +42,6 @@ class Juego {
 
     fun obtenerPuntuacion(): Int = puntuacion
     fun obtenerIntentosRestantes(): Int = intentosRestantes
-    fun obtenerImagenesAcertadas(): List<Imagen> = imagenesAcertadas
+    fun obtenerImagenesAcertadas(): List<Imagen> = imagenesAcertadas.toList()
     fun imagenYaAcertada(imagen: Imagen): Boolean = imagenesAcertadas.contains(imagen)
 }

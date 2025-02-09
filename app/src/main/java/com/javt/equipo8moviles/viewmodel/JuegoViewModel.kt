@@ -1,5 +1,6 @@
 package com.javt.equipo8moviles.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -59,11 +60,19 @@ class JuegoViewModel : ViewModel() {
         return juego.imagenYaAcertada(imagen)
     }
     fun agregarImagenAcertada(imagen: Imagen) {
+        Log.e("JuegoViewModel", "Intentando agregar imagen: ${imagen.nombre}")
+
         if (!juego.imagenYaAcertada(imagen)) {
             juego.registrarIntento(true, imagen)
-            _imagenesAcertadas.value = juego.obtenerImagenesAcertadas()
+            _imagenesAcertadas.postValue(juego.obtenerImagenesAcertadas().toList())
+
+            Log.e("JuegoViewModel", "Imagen agregada a LiveData. Total: ${_imagenesAcertadas.value?.size}")
+        } else {
+            Log.e("JuegoViewModel", "La imagen ya estaba en la lista.")
         }
     }
+
+
 }
 
 
