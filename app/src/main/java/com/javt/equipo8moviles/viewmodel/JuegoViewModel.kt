@@ -13,11 +13,11 @@ class JuegoViewModel : ViewModel() {
     private val _puntuacion = MutableLiveData(0)
     val puntuacion: LiveData<Int> get() = _puntuacion
 
-    private val _intentos = MutableLiveData(3) // Número máximo de intentos
+    private val _intentos = MutableLiveData(5) // Se ajustará según el nivel
     val intentos: LiveData<Int> get() = _intentos
 
-    val _imagenesAcertadas = mutableListOf<Imagen>()
-    val imagenesAcertadas: LiveData<List<Imagen>> get() = MutableLiveData(_imagenesAcertadas)
+    private val _imagenesAcertadas = MutableLiveData<List<Imagen>>(emptyList())
+    val imagenesAcertadas: LiveData<List<Imagen>> get() = _imagenesAcertadas
 
     private val imagenesFacil = listOf(
         Imagen("paella", 39.4699, -0.3763, "Valencia"),
@@ -35,37 +35,35 @@ class JuegoViewModel : ViewModel() {
     fun iniciarJuego(nivel: Int) {
         juego.resetIntentos(nivel)
         _intentos.value = juego.obtenerIntentosRestantes()
+        _puntuacion.value = 0
+        _imagenesAcertadas.value = emptyList()
     }
 
     fun obtenerImagenesSegunDificultad(nivel: Int): List<Imagen> {
-        return when (nivel) {
-            0 -> imagenesFacil
-            1 -> imagenesDificil
-            else -> imagenesFacil
+        return if (nivel == 1) imagenesDificil else imagenesFacil
+    }
+
+    fun procesarIntento(acierto: Boolean, imagen: Imagen) {
+        juego.registrarIntento(acierto, imagen)
+        _intentos.value = juego.obtenerIntentosRestantes()
+        _puntuacion.value = juego.obtenerPuntuacion()
+        if (acierto) {
+            _imagenesAcertadas.value = juego.obtenerImagenesAcertadas()
         }
     }
 
-    fun procesarIntento(acierto: Boolean, timestamp: Long, imagen: Imagen) {
-        if (_intentos.value!! > 0) {
-            if (acierto) {
-                _puntuacion.value = _puntuacion.value!! + 1
-            } else {
-                _intentos.value = (_intentos.value!! - 1).coerceAtLeast(0) // Evita valores negativos
-            }
-        }
-    }
     fun juegoTerminado(): Boolean {
         return _intentos.value == 0
     }
-    // Método para registrar una imagen acertada
+    fun imagenYaAcertada(imagen: Imagen): Boolean {
+        return juego.imagenYaAcertada(imagen)
+    }
     fun agregarImagenAcertada(imagen: Imagen) {
-        if (!_imagenesAcertadas.contains(imagen)) {
-            _imagenesAcertadas.add(imagen)
+        if (!juego.imagenYaAcertada(imagen)) {
+            juego.registrarIntento(true, imagen)
+            _imagenesAcertadas.value = juego.obtenerImagenesAcertadas()
         }
     }
-
-    // Verificar si una imagen ya ha sido acertada
-    fun imagenYaAcertada(imagen: Imagen): Boolean {
-        return _imagenesAcertadas.contains(imagen)
-    }
 }
+
+

@@ -54,7 +54,8 @@ class PantallaImagenes : AppCompatActivity() {
         snapHelper.attachToRecyclerView(binding.rvImages)
 
         binding.rvImages.adapter = AdaptadorImagenes(
-            viewModel.obtenerImagenesSegunDificultad(difficulty.ordinal)
+            viewModel.obtenerImagenesSegunDificultad(difficulty.ordinal),
+            supportFragmentManager // Pasa el FragmentManager
         ) { imagen -> onImageSelected(imagen) }
     }
 
@@ -62,9 +63,11 @@ class PantallaImagenes : AppCompatActivity() {
         if (!jugando) return
 
         // Si la imagen ya fue seleccionada y acertada, no hacer nada
-        if (viewModel._imagenesAcertadas.contains(imagen)) {
-            Toast.makeText(this, "Ya has acertado esta imagen", Toast.LENGTH_SHORT).show()
-            return
+        viewModel.imagenesAcertadas.value?.let { lista ->
+            if (lista.contains(imagen)) {
+                Toast.makeText(this, "Ya has acertado esta imagen", Toast.LENGTH_SHORT).show()
+                return
+            }
         }
 
         imagenActual = imagen // Guardar la imagen actual
@@ -80,7 +83,7 @@ class PantallaImagenes : AppCompatActivity() {
         if (imagenActual == null) return
 
         // Registrar intento
-        viewModel.procesarIntento(acierto, System.currentTimeMillis(), imagenActual!!)
+        viewModel.procesarIntento(acierto, imagenActual!!)
 
         if (acierto) {
             // Eliminar el fragmento porque se acertó

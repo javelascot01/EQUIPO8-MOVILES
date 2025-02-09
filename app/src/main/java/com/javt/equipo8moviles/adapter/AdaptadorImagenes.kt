@@ -4,13 +4,17 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.holder.ImagenesViewHolder
 import com.javt.equipo8moviles.model.Imagen
 import com.javt.equipo8moviles.view.ActivityJuego
 
-class AdaptadorImagenes(private val imagenes: List<Imagen>, private val onImageClick: (Imagen) -> Unit) : RecyclerView.Adapter<ImagenesViewHolder>() {
+class AdaptadorImagenes(private val imagenes: List<Imagen>,
+                        private val fragmentManager: FragmentManager,
+                        private val onImageClick: (Imagen) -> Unit
+) : RecyclerView.Adapter<ImagenesViewHolder>() {
     private var data: List<Imagen>
     init {
         data = imagenes
@@ -25,6 +29,12 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>, private val onImageC
     }
     override fun onBindViewHolder(holder: ImagenesViewHolder,
                                   position: Int) {
+        // Eliminar el fragment, no funciona al volver a un estado anterior
+        val fragment = fragmentManager.findFragmentById(R.id.fragmentContainer)
+        Log.e("AdaptadorImagenes", "Fragment: $fragment")
+        if (fragment != null) {
+            fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
+        }
         // Inicializamos la lista de imagenes
         val imagenName = data[holder.adapterPosition]
         //accedo al imageView, por el nombre

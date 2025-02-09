@@ -13,12 +13,12 @@ class Juego {
         }
     }
 
-    fun registrarIntento(acierto: Boolean, tiempo: Long, imagen: Imagen) {
+    fun registrarIntento(acierto: Boolean, imagen: Imagen) {
         if (acierto) {
-            val puntos = calcularPuntos()
-            puntuacion += puntos
-            imagenesAcertadas.add(imagen)
-            resetIntentos(1)  // Reiniciar intentos para la siguiente imagen
+            puntuacion += calcularPuntos()
+            if (!imagenesAcertadas.contains(imagen)) {
+                imagenesAcertadas.add(imagen)
+            }
         } else {
             intentosRestantes--
         }
@@ -38,4 +38,5 @@ class Juego {
     fun obtenerPuntuacion(): Int = puntuacion
     fun obtenerIntentosRestantes(): Int = intentosRestantes
     fun obtenerImagenesAcertadas(): List<Imagen> = imagenesAcertadas
+    fun imagenYaAcertada(imagen: Imagen): Boolean = imagenesAcertadas.contains(imagen)
 }

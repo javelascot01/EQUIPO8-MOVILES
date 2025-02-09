@@ -19,8 +19,11 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
+import kotlin.math.abs
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -31,7 +34,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private var marker: Marker? = null
     private var circleOverlay: Polygon? = null
     private val viewModel: JuegoViewModel by activityViewModels()
-
     private var imagenActual: Imagen? = null
 
     companion object {
@@ -56,9 +58,14 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     private fun setupMap() {
         Configuration.getInstance().load(requireContext(), requireActivity().getPreferences(0))
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.setTileSource(TileSourceFactory.OpenTopo) // estilo de mapa, tarda un poco mas en cargar que el mapa por defecto
         mapView.setMultiTouchControls(true)
-        mapView.controller.setZoom(5.0)
+
+        // Configurar el centro del mapa en España (latitud y longitud aproximadas)
+        val mapController = mapView.controller
+        mapController.setZoom(6.8)
+        mapController.setCenter(GeoPoint(40.4168, -3.7038)) // Madrid, España
+
         mapView.overlays.add(MapEventsOverlay(this))
 
         val nombreImagen = arguments?.getString(ARG_NOMBRE_IMAGEN)
@@ -67,7 +74,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
         // Verificar si la imagen ya ha sido acertada
         if (imagenActual != null && viewModel.imagenYaAcertada(imagenActual!!)) {
             Toast.makeText(requireContext(), "Ya acertaste esta imagen", Toast.LENGTH_SHORT).show()
-            // Si ya se ha acertado, puedes cerrar el fragmento o hacer lo que necesites
             requireActivity().supportFragmentManager.beginTransaction()
                 .remove(this@MapFragment)
                 .commit()
@@ -98,14 +104,14 @@ class MapFragment : Fragment(), MapEventsReceiver {
         val distancia = calcularDistancia(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
         val acierto = distancia <= 100000.0
 
-        viewModel.procesarIntento(acierto, System.currentTimeMillis(), imagenActual!!)
+        viewModel.procesarIntento(acierto,  imagenActual!!)
 
         requireActivity().runOnUiThread {
             val mensaje = if (acierto) {
                 // Mueve la cámara al punto de la imagen
                 val puntoAcierto = GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud)
                 mapView.controller.setCenter(puntoAcierto)  // Centra la cámara en el punto
-                mapView.controller.setZoom(7.0) // Ajusta el nivel de zoom
+                mapView.controller.setZoom(8.0) // Ajusta el nivel de zoom
 
                 // Registrar la imagen como acertada
                 viewModel.agregarImagenAcertada(imagenActual!!)
@@ -150,18 +156,18 @@ class MapFragment : Fragment(), MapEventsReceiver {
         val dLat = Math.toRadians(p2.latitude - p1.latitude)
         val dLon = Math.toRadians(p2.longitude - p1.longitude)
 
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(p1.latitude)) * cos(Math.toRadians(p2.latitude)) *
-                Math.sin(dLon / 2) * sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(p1.latitude)) * cos(Math.toRadians(p2.latitude)) *
+                sin(dLon / 2) * sin(dLon / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         return r * c
     }
 
     private fun obtenerPista(userPoint: GeoPoint, correctPoint: GeoPoint): String {
         // Calculamos la diferencia entre latitudes y longitudes
-        val latitudDiferencia = Math.abs(userPoint.latitude - correctPoint.latitude)
-        val longitudDiferencia = Math.abs(userPoint.longitude - correctPoint.longitude)
+        val latitudDiferencia = abs(userPoint.latitude - correctPoint.latitude)
+        val longitudDiferencia = abs(userPoint.longitude - correctPoint.longitude)
 
         // Comparamos las diferencias
         return if (latitudDiferencia > longitudDiferencia) {
