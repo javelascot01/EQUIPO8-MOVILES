@@ -21,13 +21,14 @@ class MainActivity : AppCompatActivity() {
         val dificultades = Dificultad.entries.map { it.aString(this) }
         val adapter = ArrayAdapter(
                 this,
-        R.layout.simple_spinner_item, // Layout por defecto
+        R.layout.simple_spinner_item,
         dificultades // Lista de dificultades
         )
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item) // Layout por defecto
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        // Start PantallaImagenes with the selected difficulty
+
+        // Funcionalidad boton jugar
         binding.btnJugar.setOnClickListener {
             val selectedDifficulty = spinner.selectedItemPosition
             val intent = Intent(this, PantallaImagenes::class.java)

@@ -1,7 +1,6 @@
     package com.javt.equipo8moviles.view.fragments
 
     import android.content.Intent
-    import android.graphics.Color
     import android.os.Bundle
     import android.view.LayoutInflater
     import android.view.View
@@ -9,6 +8,7 @@
     import android.widget.Toast
     import androidx.fragment.app.Fragment
     import androidx.fragment.app.activityViewModels
+    import com.javt.equipo8moviles.R
     import com.javt.equipo8moviles.databinding.FragmentMapBinding
     import com.javt.equipo8moviles.model.Imagen
     import com.javt.equipo8moviles.view.PuntuacionActivity
@@ -22,10 +22,6 @@
     import org.osmdroid.views.overlay.Marker
     import org.osmdroid.views.overlay.Polygon
     import kotlin.math.abs
-    import kotlin.math.atan2
-    import kotlin.math.cos
-    import kotlin.math.sin
-    import kotlin.math.sqrt
 
 
     class MapFragment : Fragment(), MapEventsReceiver {
@@ -71,11 +67,11 @@
             mapView.overlays.add(MapEventsOverlay(this))
 
             val nombreImagen = arguments?.getString(ARG_NOMBRE_IMAGEN)
-            imagenActual = viewModel.obtenerImagenesSegunDificultad(0).find { it.nombre == nombreImagen }
+            imagenActual = viewModel.obtenerImagenesSegunDificultad(viewModel.getDificultad()).find { it.nombre == nombreImagen }
 
             // Verificar si la imagen ya ha sido acertada
             if (imagenActual != null && viewModel.imagenYaAcertada(imagenActual!!)) {
-                Toast.makeText(requireContext(), "Ya acertaste esta imagen", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
                 requireActivity().supportFragmentManager.beginTransaction()
                     .remove(this@MapFragment)
                     .commit()
@@ -87,32 +83,37 @@
 
             // Verificar si la imagen ya ha sido acertada
             if (viewModel.imagenYaAcertada(imagenActual!!)) {
-                Toast.makeText(requireContext(), "Ya acertaste esta imagen", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),
+                    getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
                 return false
             }
 
             marker?.let { mapView.overlays.remove(it) }
             circleOverlay?.let { mapView.overlays.remove(it) }
 
-            marker = Marker(mapView).apply {
-                position = p
-                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            }
-            mapView.overlays.add(marker)
+//             -- Marcador de la mano por si hace falta
+//            marker = Marker(mapView).apply {
+//                position = p
+//                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//            }
+//            mapView.overlays.add(marker)
 
-            circleOverlay = createCircle(p, 100000.0)
+            // Circulo de la imagen
+            circleOverlay = viewModel.createCircle(p)
             mapView.overlays.add(circleOverlay)
 
-            val distancia = calcularDistancia(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
-            val acierto = distancia <= 100000.0
+            // Calcular la distancia entre el marcador y la imagen
+            val distancia = viewModel.calcularDistancia(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
+            val acierto=viewModel.isAcierto(distancia)
 
+            // Registrar el intento en el ViewModel y actualizar la UI
             viewModel.procesarIntento(acierto,  imagenActual!!)
 
             requireActivity().runOnUiThread {
                 val mensaje = if (acierto) {
                     // Mueve la cámara al punto de la imagen
                     val puntoAcierto = GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud)
-                    mapView.controller.setCenter(puntoAcierto)  // Centra la cámara en el punto
+                    mapView.controller.setCenter(puntoAcierto)  // Centra la cámara en el punto (madrid)
                     mapView.controller.setZoom(8.0) // Ajusta el nivel de zoom
 
                     // Registrar la imagen como acertada
@@ -126,8 +127,9 @@
                 Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show()
 
                 // Si se acaban los intentos, cerrar el fragmento
-                if (viewModel.juegoTerminado() || viewModel.imagenesAcertadas.value?.size == viewModel.obtenerImagenesSegunDificultad(0).size) {
-                    Toast.makeText(requireContext(), "Juego terminado, sin intentos restantes o todas las imágenes acertadas.", Toast.LENGTH_LONG).show()
+                if (viewModel.juegoTerminado() || viewModel.imagenesAcertadas.value?.size == viewModel.obtenerImagenesSegunDificultad(viewModel.getDificultad()).size) {
+                    Toast.makeText(requireContext(),
+                        getString(R.string.juego_terminado_sin_intentos_restantes_o_todas_las_im_genes_acertadas), Toast.LENGTH_LONG).show()
 
                     // Navegar a la pantalla de puntuación
                     val intent = Intent(requireContext(), PuntuacionActivity::class.java)
@@ -148,29 +150,7 @@
             return false
         }
 
-        private fun createCircle(center: GeoPoint, radius: Double): Polygon {
-            return Polygon().apply {
-                points = Polygon.pointsAsCircle(center, radius)
-                fillColor = 0x40FF0000
-                strokeColor = Color.RED
-                strokeWidth = 3f
-            }
-        }
-
-        private fun calcularDistancia(p1: GeoPoint, p2: GeoPoint): Double {
-            // Formula de Haversine para calcular la distancia entre dos puntos
-            val r = 6371000
-            val dLat = Math.toRadians(p2.latitude - p1.latitude)
-            val dLon = Math.toRadians(p2.longitude - p1.longitude)
-
-            val a = sin(dLat / 2) * sin(dLat / 2) +
-                    cos(Math.toRadians(p1.latitude)) * cos(Math.toRadians(p2.latitude)) *
-                    sin(dLon / 2) * sin(dLon / 2)
-            val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-            return r * c
-        }
-
+        // Dejar esta función aqui porque no se puede acceder a los string desde el viewModel sin modificarlo
         private fun obtenerPista(userPoint: GeoPoint, correctPoint: GeoPoint): String {
             // Calculamos la diferencia entre latitudes y longitudes
             val latitudDiferencia = abs(userPoint.latitude - correctPoint.latitude)
@@ -180,16 +160,16 @@
             return if (latitudDiferencia > longitudDiferencia) {
                 // Si la diferencia de latitudes es mayor
                 if (userPoint.latitude < correctPoint.latitude) {
-                    "norte"
+                    getString(R.string.norte)
                 } else {
-                    "sur"
+                    getString(R.string.sur)
                 }
             } else {
                 // Si la diferencia de longitudes es mayor
                 if (userPoint.longitude < correctPoint.longitude) {
-                    "este"
+                    getString(R.string.este)
                 } else {
-                    "oeste"
+                    getString(R.string.oeste)
                 }
             }
         }

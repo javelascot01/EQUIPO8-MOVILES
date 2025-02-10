@@ -7,10 +7,10 @@ class Juego {
     private var puntuacion: Int = 0
     private val imagenesAcertadas = mutableListOf<Imagen>()
 
-    fun resetIntentos(nivel: Int) {
-        intentosRestantes = when (nivel) {
-            0 -> 5  // Fácil
-            1 -> 3  // Difícil
+    fun resetIntentos(dificultad: Dificultad) {
+        intentosRestantes = when (dificultad) {
+            Dificultad.FACIL -> 5  // Fácil
+            Dificultad.DIFICIL -> 3  // Difícil
             else -> 5
         }
     }
