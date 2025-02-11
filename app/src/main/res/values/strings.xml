@@ -5,7 +5,6 @@
     <string name="dif_moderada">Moderate</string>
     <string name="dif_facil">Easy</string>
 
-
     <string name="app_name">Guess Where I Am</string>
     <string name="about_title">Game: Guess Where I Am</string>
     <string name="version">Version 1.0</string>
@@ -16,8 +15,15 @@
     </string>
     <string name="btn_back">Back</string>
     <string name="menu_about">About</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    <string name="norte">North</string>
+    <string name="sur">South</string>
+    <string name="este">East</string>
+    <string name="oeste">West</string>
+    <string name="ya_acertaste_esta_imagen">You already guessed this image</string>
+    <string name="juego_terminado_sin_intentos_restantes_o_todas_las_im_genes_acertadas">
+        Game over, no attempts left or all images guessed.
+    </string>
+    <!-- POR TRADUCIR-->
+    <string name="pantalla_en_construccion">Pantalla en construccion</string>
+    <string name="mejor_puntuacion">"Mejor puntuación: "</string>
 </resources>

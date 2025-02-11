@@ -18,6 +18,14 @@
     </string>
         <string name="btn_back">Volver</string>
         <string name="menu_about">Acerca de</string>
+    <string name="norte">norte</string>
+    <string name="sur">sur</string>
+    <string name="este">este</string>
+    <string name="oeste">oeste</string>
+    <string name="ya_acertaste_esta_imagen">Ya acertaste esta imagen</string>
+    <string name="juego_terminado_sin_intentos_restantes_o_todas_las_im_genes_acertadas">Juego terminado, sin intentos restantes o todas las imágenes acertadas.</string>
+    <string name="pantalla_en_construccion">Pantalla en construccion</string>
+    <string name="mejor_puntuacion">"Mejor puntuación: "</string>
 
 
 </resources>

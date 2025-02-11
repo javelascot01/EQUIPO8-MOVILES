@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.holder.ImagenesViewHolder
 import com.javt.equipo8moviles.model.Imagen
-import com.javt.equipo8moviles.view.ActivityJuego
 
 class AdaptadorImagenes(private val imagenes: List<Imagen>,
                         private val fragmentManager: FragmentManager,
@@ -40,13 +39,13 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>,
         //accedo al imageView, por el nombre
         val imageResourceId =
             holder.itemView.context.resources.getIdentifier(
-                imagenName.nombre,"drawable",holder.itemView.context.packageName)
+                imagenName.ruta,"drawable",holder.itemView.context.packageName)
 
 
         if (imageResourceId != 0) {
             holder.imagenView.setImageResource(imageResourceId)
         } else {
-            Log.e("AdaptadorImagenes", "Image resource not found for name: ${imagenName.nombre}")
+            Log.e("AdaptadorImagenes", "Image resource not found for name: ${imagenName.ruta}")
         }
         holder.itemView.setOnClickListener {
             onImageClick(imagenName) // Llamamos a la función de callback con la imagen seleccionada

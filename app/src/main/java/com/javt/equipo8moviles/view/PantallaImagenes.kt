@@ -1,16 +1,14 @@
 package com.javt.equipo8moviles.view
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.adapter.AdaptadorImagenes
-import com.javt.equipo8moviles.databinding.ActivityMainBinding
 import com.javt.equipo8moviles.databinding.ActivityPantallaImagenesBinding
 import com.javt.equipo8moviles.model.Dificultad
 import com.javt.equipo8moviles.model.Imagen
@@ -21,7 +19,6 @@ class PantallaImagenes : AppCompatActivity() {
     private lateinit var binding: ActivityPantallaImagenesBinding
     private val viewModel: JuegoViewModel by viewModels()
     private lateinit var difficulty: Dificultad
-    private var jugando: Boolean = true
     private var imagenActual: Imagen? = null // Para rastrear la imagen seleccionada
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +27,9 @@ class PantallaImagenes : AppCompatActivity() {
         setContentView(binding.root)
 
         // Obtener dificultad desde el Intent
-        val intDificultad = intent.getIntExtra("difficulty", 0)
+        val intDificultad = intent.getIntExtra("difficulty", 0) // Si la obtengo como objeto peta
         difficulty = Dificultad.values()[intDificultad]
-        viewModel.iniciarJuego(intDificultad)
+        viewModel.iniciarJuego(difficulty)
 
         // Configurar RecyclerView
         initRecyclerView()
@@ -54,22 +51,23 @@ class PantallaImagenes : AppCompatActivity() {
         snapHelper.attachToRecyclerView(binding.rvImages)
 
         binding.rvImages.adapter = AdaptadorImagenes(
-            viewModel.obtenerImagenesSegunDificultad(difficulty.ordinal),
-            supportFragmentManager // Pasa el FragmentManager
+            viewModel.obtenerImagenesSegunDificultad(difficulty),
+            supportFragmentManager // Pasar el FragmentManager a AdaptadorImagenes para el fragmento del mapa
         ) { imagen -> onImageSelected(imagen) }
     }
 
     private fun onImageSelected(imagen: Imagen) {
-        if (!jugando) return
-
         // Si la imagen ya fue seleccionada y acertada, no hacer nada
         viewModel.imagenesAcertadas.value?.let { lista ->
             if (lista.contains(imagen)) {
-                Toast.makeText(this, "Ya has acertado esta imagen", Toast.LENGTH_SHORT).show()
+                val intent= Intent(this,ActivityVideo::class.java)
+                intent.putExtra("nombreVideo",imagen.ruta)
+                intent.putExtra("nombreImagen",imagen.nombre)
+                startActivity(intent)
+                Toast.makeText(this, getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
                 return
             }
         }
-
         imagenActual = imagen // Guardar la imagen actual
 
         // Mostrar fragmento del mapa con la nueva imagen
@@ -79,33 +77,4 @@ class PantallaImagenes : AppCompatActivity() {
             .commitAllowingStateLoss()
     }
 
-    fun procesarResultado(acierto: Boolean) {
-        if (imagenActual == null) return
-
-        // Registrar intento
-        viewModel.procesarIntento(acierto, imagenActual!!)
-
-        if (acierto) {
-            // Eliminar el fragmento porque se acertó
-            supportFragmentManager.beginTransaction()
-                .remove(supportFragmentManager.findFragmentById(R.id.fragmentContainer)!!)
-                .commitAllowingStateLoss()
-
-            imagenActual = null // Limpiar imagen seleccionada
-        }
-    }
-    private fun procesarIntento(acierto: Boolean) {
-        if (acierto) {
-            val fragmentManager = supportFragmentManager
-            val fragment = fragmentManager.findFragmentById(R.id.fragmentContainer)
-            if (fragment != null) {
-                fragmentManager.beginTransaction().remove(fragment).commit()
-            }
-        }
-    }
-
-    private fun finalizarJuego() {
-        jugando = false
-        Toast.makeText(this, "Juego terminado. Puntuación final: ${viewModel.puntuacion.value}", Toast.LENGTH_LONG).show()
-    }
 }
