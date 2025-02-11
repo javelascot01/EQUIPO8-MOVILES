@@ -4,15 +4,17 @@ import android.util.Log
 
 class Juego {
     private var intentosRestantes: Int = 5
+    private var maxIntentos: Int = 5
     private var puntuacion: Int = 0
     private val imagenesAcertadas = mutableListOf<Imagen>()
 
     fun resetIntentos(dificultad: Dificultad) {
-        intentosRestantes = when (dificultad) {
-            Dificultad.FACIL -> 5  // Fácil
-            Dificultad.DIFICIL -> 3  // Difícil
+        maxIntentos = when (dificultad) {
+            Dificultad.FACIL -> 5
+            Dificultad.DIFICIL -> 3
             else -> 5
         }
+        intentosRestantes = maxIntentos
     }
 
     fun registrarIntento(acierto: Boolean, imagen: Imagen) {
@@ -30,14 +32,8 @@ class Juego {
     }
 
     private fun calcularPuntos(): Int {
-        return when (intentosRestantes) {
-            5 -> 100
-            4 -> 80
-            3 -> 60
-            2 -> 40
-            1 -> 20
-            else -> 0
-        }
+        val intentosUsados = maxIntentos - intentosRestantes
+        return 100 - intentosUsados * 20
     }
 
     fun obtenerPuntuacion(): Int = puntuacion

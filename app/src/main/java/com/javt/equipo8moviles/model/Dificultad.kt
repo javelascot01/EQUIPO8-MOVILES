@@ -11,5 +11,4 @@ enum class Dificultad(private val nivel: Int){
     fun aString(context: Context): String {
         return context.getString(nivel)
     }
-
 }

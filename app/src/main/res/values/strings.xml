@@ -23,4 +23,7 @@
     <string name="juego_terminado_sin_intentos_restantes_o_todas_las_im_genes_acertadas">
         Game over, no attempts left or all images guessed.
     </string>
+    <!-- POR TRADUCIR-->
+    <string name="pantalla_en_construccion">Pantalla en construccion</string>
+    <string name="mejor_puntuacion">"Mejor puntuación: "</string>
 </resources>

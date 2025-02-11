@@ -1,5 +1,6 @@
 package com.javt.equipo8moviles.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -59,6 +60,10 @@ class PantallaImagenes : AppCompatActivity() {
         // Si la imagen ya fue seleccionada y acertada, no hacer nada
         viewModel.imagenesAcertadas.value?.let { lista ->
             if (lista.contains(imagen)) {
+                val intent= Intent(this,ActivityVideo::class.java)
+                intent.putExtra("nombreVideo",imagen.ruta)
+                intent.putExtra("nombreImagen",imagen.nombre)
+                startActivity(intent)
                 Toast.makeText(this, getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
                 return
             }

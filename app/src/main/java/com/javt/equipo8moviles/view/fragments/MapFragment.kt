@@ -66,7 +66,9 @@
 
             mapView.overlays.add(MapEventsOverlay(this))
 
+            // Obtener el nombre imagen actual a partir de los argumentos
             val nombreImagen = arguments?.getString(ARG_NOMBRE_IMAGEN)
+            // Obtener la imagen actual a partir de la lista de imágenes del ViewModel
             imagenActual = viewModel.obtenerImagenesSegunDificultad(viewModel.getDificultad()).find { it.nombre == nombreImagen }
 
             // Verificar si la imagen ya ha sido acertada
@@ -134,6 +136,7 @@
                     // Navegar a la pantalla de puntuación
                     val intent = Intent(requireContext(), PuntuacionActivity::class.java)
                     intent.putExtra("imagenesAcertadas", ArrayList(viewModel.imagenesAcertadas.value ?: emptyList()))
+                    intent.putExtra("puntuacion", viewModel.puntuacion.value ?: 0)
                     startActivity(intent)
 
                     // Cierra la actividad de PantallaImagenes y vuelve a la principal
