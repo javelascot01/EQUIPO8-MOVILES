@@ -4,11 +4,19 @@
     <string name="dif_dificil">Hard</string>
     <string name="dif_moderada">Moderate</string>
     <string name="dif_facil">Easy</string>
+    <string name ="acercade">About app</string>
+    <string name ="puntuacion">Score: </string>
+    <string name ="intentosrestantes">Remaining attempts: </string>
+    <string name="puntuacionconseguida">Points earned</string>
+    <string name="pausar">PAUSE</string>
+    <string name="continuar">CONTINUE</string>
+    <string name="videos">Videos</string>
+
 
     <string name="app_name">Guess Where I Am</string>
     <string name="about_title">Game: Guess Where I Am</string>
     <string name="version">Version 1.0</string>
-    <string name="authors">Authors: [Your Name] and [Your Partner]</string>
+    <string name="authors">Authors: Jesus Velasco and Julián Urraca</string>
     <string name="description">
         This game was developed as part of the challenge for the
         Multimedia Programming module at IES Maestre de Calatrava.
@@ -24,6 +32,6 @@
         Game over, no attempts left or all images guessed.
     </string>
     <!-- POR TRADUCIR-->
-    <string name="pantalla_en_construccion">Pantalla en construccion</string>
-    <string name="mejor_puntuacion">"Mejor puntuación: "</string>
+    <string name="pantalla_en_construccion">Screen under construction</string>
+    <string name="mejor_puntuacion">"Best score: "</string>
 </resources>

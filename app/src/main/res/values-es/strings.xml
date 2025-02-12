@@ -6,12 +6,25 @@
     <string name="dif_dificil">Difícil</string>
     <string name="dif_moderada">Moderada</string>
     <string name="dif_facil">Fácil</string>
+    <string name ="acercade">Acerca de</string>
+    <string name ="puntuacion">Puntuacion: </string>
+    <string name ="intentosrestantes">Intentos restantes: </string>
+    <string name="puntuacionconseguida">Puntuación conseguida</string>
+    <string name="pausar">PAUSAR</string>
+    <string name="continuar">CONTINUAR</string>
+    <string name="videos">Vídeos</string>
 
 
-        <string name="app_name">Adivina Dónde Estoy</string>
+
+
+
+
+
+
+    <string name="app_name">Adivina Dónde Estoy</string>
         <string name="about_title">Juego: Adivina Dónde Estoy</string>
         <string name="version">Versión 1.0</string>
-        <string name="authors">Autores: [Tu Nombre] y [Tu Compañero]</string>
+        <string name="authors">Autores: Jesus Velasco y Julián Urraca</string>
         <string name="description">
         Este juego ha sido desarrollado como parte del reto del módulo de
         Programación Multimedia en el IES Maestre de Calatrava.

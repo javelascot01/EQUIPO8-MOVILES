@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("difficulty", selectedDifficulty)
             startActivity(intent)
         }
+        binding.btnAcercaDe.setOnClickListener {
+            val intent = Intent(this, AcercaDe::class.java)
+            startActivity(intent)
+        }
 
     }
     override fun onResume() {
