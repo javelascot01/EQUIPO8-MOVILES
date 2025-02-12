@@ -94,4 +94,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <Button
+        android:id="@+id/btnMute"
+        android:layout_width="62dp"
+        android:layout_height="48dp"
+        android:text="@string/mute"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAcercaDe"
+        app:layout_constraintTop_toTopOf="@+id/btnJugar"
+        app:layout_constraintVertical_bias="0.52"
+        tools:layout_editor_absoluteX="75dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

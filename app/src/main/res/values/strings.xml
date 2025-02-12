@@ -11,6 +11,7 @@
     <string name="pausar">PAUSE</string>
     <string name="continuar">CONTINUE</string>
     <string name="videos">Videos</string>
+    <string name="mute">🔊</string>
 
 
     <string name="app_name">Guess Where I Am</string>
