@@ -75,20 +75,12 @@ class MainActivity : AppCompatActivity() {
 
         // Mutear o desmutear
         if (newMuteState) {
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
             Toast.makeText(this, "Mute ON", Toast.LENGTH_SHORT).show()
         } else {
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume / 2, 0)
+
             Toast.makeText(this, "Mute OFF", Toast.LENGTH_SHORT).show()
         }
-        updateMuteButton()
     }
 
-    // Método para actualizar el texto del botón según el estado de mute
-    private fun updateMuteButton() {
-        val isMuted = prefs.getBoolean("isMuted", false)
-        
-    }
 
 }

@@ -14,6 +14,12 @@
     <string name="mute">🔊</string>
 
 
+
+    <string name="correct">Correct!, it was</string>
+    <string name="wrong">You failed.</string>
+    <string name="try_again">Try again</string>
+
+
     <string name="app_name">Guess Where I Am</string>
     <string name="about_title">Game: Guess Where I Am</string>
     <string name="version">Version 1.0</string>

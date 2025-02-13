@@ -20,7 +20,9 @@
 
 
 
-
+    <string name="correct">¡Correcto!, era</string>
+    <string name="wrong">Fallaste.</string>
+    <string name="try_again">Prueba más al</string>
 
 
     <string name="app_name">Adivina Dónde Estoy</string>
