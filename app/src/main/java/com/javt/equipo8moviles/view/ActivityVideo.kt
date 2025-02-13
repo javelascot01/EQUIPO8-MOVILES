@@ -57,6 +57,7 @@ class ActivityVideo : AppCompatActivity() {
 
         binding.botDetener.setOnClickListener {
             binding.vv.stopPlayback()
+            binding.vv.setVideoURI(Uri.parse("android.resource://$packageName/$videoResId"))
         }
     }
 }
