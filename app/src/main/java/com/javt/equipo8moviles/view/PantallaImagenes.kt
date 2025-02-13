@@ -36,11 +36,11 @@ class PantallaImagenes : AppCompatActivity() {
 
         // Observar cambios en la puntuación e intentos restantes
         viewModel.puntuacion.observe(this) { puntuacion ->
-            binding.textPuntuacion.text = "Puntuación: $puntuacion"
+            binding.textPuntuacion.text = getString(R.string.puntuacion)+" "+ puntuacion
         }
 
         viewModel.intentos.observe(this) { intentos ->
-            binding.textIntentos.text = "Intentos restantes: $intentos"
+            binding.textIntentos.text = getString(R.string.intentosrestantes)+" "+ intentos
         }
     }
 

@@ -11,9 +11,9 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
+        android:layout_gravity="center"
         android:contentDescription="App Icon"
-        android:layout_gravity="center" />
+        android:src="@mipmap/ic_geocomida" />
 
     <TextView
         android:layout_width="wrap_content"

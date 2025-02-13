@@ -1,6 +1,9 @@
     package com.javt.equipo8moviles.view.fragments
 
+    import android.content.Context
     import android.content.Intent
+    import android.content.SharedPreferences
+    import android.media.MediaPlayer
     import android.os.Bundle
     import android.view.LayoutInflater
     import android.view.View
@@ -33,6 +36,8 @@
         private var circleOverlay: Polygon? = null
         private val viewModel: JuegoViewModel by activityViewModels()
         private var imagenActual: Imagen? = null
+        private lateinit var mediaPlayer : MediaPlayer
+        private lateinit var prefs: SharedPreferences
 
         companion object {
             private const val ARG_NOMBRE_IMAGEN = "nombre_imagen"
@@ -50,6 +55,7 @@
             _binding = FragmentMapBinding.inflate(inflater, container, false)
             val view = binding.root
             mapView = binding.mapView
+            prefs=requireActivity().getSharedPreferences("JuegoPrefs", Context.MODE_PRIVATE)
             setupMap()
             return view
         }
@@ -121,10 +127,10 @@
                     // Registrar la imagen como acertada
                     viewModel.agregarImagenAcertada(imagenActual!!)
 
-                    "¡Correcto! Era ${imagenActual!!.lugar}"
+                    getString(R.string.correct) +" "+ imagenActual!!.lugar
                 } else {
                     val pista = obtenerPista(p, GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud))
-                    "Fallaste. Prueba más al $pista"
+                    getString(R.string.wrong) +" "+ getString(R.string.try_again)+" "+ pista
                 }
                 Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show()
 
@@ -137,6 +143,11 @@
                     val intent = Intent(requireContext(), PuntuacionActivity::class.java)
                     intent.putExtra("imagenesAcertadas", ArrayList(viewModel.imagenesAcertadas.value ?: emptyList()))
                     intent.putExtra("puntuacion", viewModel.puntuacion.value ?: 0)
+                    val tamaniolista=viewModel.obtenerImagenesSegunDificultad(viewModel.getDificultad()).size
+                    val tamanioAcertadas=viewModel.imagenesAcertadas.value?.size?:0
+                    if(tamanioAcertadas==tamaniolista){
+                        sonido();
+                    }
                     startActivity(intent)
 
                     // Cierra la actividad de PantallaImagenes y vuelve a la principal
@@ -180,5 +191,15 @@
         override fun onDestroyView() {
             super.onDestroyView()
             _binding = null
+        }
+        private fun sonido() {
+           val reproducir=prefs.getBoolean("isMuted",false)
+            if(!reproducir){
+                mediaPlayer= MediaPlayer.create(requireContext(),R.raw.sonidowin)
+                mediaPlayer.start()
+                mediaPlayer.setOnCompletionListener {
+                    mediaPlayer.release()
+                }
+            }
         }
     }

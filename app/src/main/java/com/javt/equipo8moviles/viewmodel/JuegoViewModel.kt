@@ -30,11 +30,21 @@ class JuegoViewModel : ViewModel() {
 
     private val imagenesFacil = listOf(
         Imagen("paella", 39.4699, -0.3763, "Valencia","Paella Valenciana"),
+        Imagen("espetos",  36.7213, -4.4213, "Malaga","Espetos"),
+        Imagen("fideua", 39.4699, -0.3763, "Valencia","Fideua"),
+        Imagen("migas", 37.1773, -3.5986, "Granada","Migas"),
+        Imagen("salmorejocordobes", 37.8882, -4.7794, "Cordoba","Salmorejo"),
         Imagen("tartasantiago", 42.8806, -8.5456, "Santiago de Compostela","Tartas de San Santiago"),
     )
 
     private val imagenesDificil = listOf(
-        Imagen("cocidomadrileno", 40.4168, -3.7038, "Madrid", "Cocido Madrileño")
+        Imagen("patatasbravas", 40.4168, -3.7038, "Madrid", "Patatas bravas"),
+        Imagen("pimientospiquillorellenosmarisco", 42.6954, -1.6761, "Navarra", "Pimientos de piquillo"),
+        Imagen("fabadaasturiana", 43.3614, -5.8593, "Asturias", "Fabada asturiana"),
+        Imagen("pulpoalagallega", 42.5751, -8.1339, "Galicia", "Pulpo gallega"),
+        Imagen("cocidomadrileno", 40.4168, -3.7038, "Madrid", "Cocido Madrileño"),
+        Imagen("cochinillosegoviano", 40.9429, -4.1088, "Segovia", "Cochinillo Segoviano"),
+
     )
 
     fun iniciarJuego(dificultad: Dificultad) {
