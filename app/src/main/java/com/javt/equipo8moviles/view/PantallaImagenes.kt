@@ -82,55 +82,35 @@ class PantallaImagenes : AppCompatActivity() {
             }
         })
     }
+
+    /**
+     * Método que se ejecuta cuando se selecciona una imagen del RecyclerView de imágenes. Muestra el fragmento
+     * con el mapa de la imagen seleccionada.
+     */
     private fun onImageSelected(imagen: Imagen) {
-        viewModel.imagenesAcertadas.value?.let { lista ->
-            if (lista.contains(imagen)) {
-                val intent = Intent(this, ActivityVideo::class.java)
-                intent.putExtra("nombreVideo", imagen.ruta)
-                intent.putExtra("nombreImagen", imagen.nombre)
-                startActivity(intent)
-                Toast.makeText(this, getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
-                return
+        // Verificar si la imagen ya ha sido acertada
+        val lista = viewModel.imagenesAcertadas.value
+        if (lista != null && lista.contains(imagen)) {
+            val intent = Intent(this, ActivityVideo::class.java)
+            intent.putExtra("nombreVideo", imagen.ruta)
+            intent.putExtra("nombreImagen", imagen.nombre)
+            startActivity(intent)
+            Toast.makeText(this, getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
+        } else {
+            // Si la imagen seleccionada es la misma que ya está mostrada, no hacer nada
+            if (imagenActual != imagen) {
+                imagenActual = imagen // Guardar la imagen actual
+
+                // Hacer visible el contenedor del fragmento
+                binding.fragmentContainer.visibility = View.VISIBLE
+
+                // Reemplazar el fragmento con la nueva imagen
+                val fragment = MapFragment.newInstance(imagen.nombre)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commitAllowingStateLoss()
             }
         }
-
-        // Si la imagen seleccionada es la misma que ya está mostrada, no hacer nada
-        if (imagenActual == imagen) return
-
-        imagenActual = imagen // Guardar la imagen actual
-
-        // Hacer visible el contenedor del fragmento
-        binding.fragmentContainer.visibility = View.VISIBLE
-
-        // Reemplazar el fragmento con la nueva imagen
-        val fragment = MapFragment.newInstance(imagen.nombre)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commitAllowingStateLoss()
     }
-
-
-    /*
-    private fun onImageSelected(imagen: Imagen) {
-
-        // Si la imagen ya fue seleccionada y acertada, no hacer nada
-        viewModel.imagenesAcertadas.value?.let { lista ->
-            if (lista.contains(imagen)) {
-                val intent= Intent(this,ActivityVideo::class.java)
-                intent.putExtra("nombreVideo",imagen.ruta)
-                intent.putExtra("nombreImagen",imagen.nombre)
-                startActivity(intent)
-                Toast.makeText(this, getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
-                return
-            }
-        }
-        imagenActual = imagen // Guardar la imagen actual
-
-        // Mostrar fragmento del mapa con la nueva imagen
-        val fragment = MapFragment.newInstance(imagen.nombre)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commitAllowingStateLoss()
-    }*/
 
 }

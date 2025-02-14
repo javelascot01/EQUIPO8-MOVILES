@@ -47,6 +47,7 @@ class JuegoViewModel : ViewModel() {
 
     )
 
+    // Iniciar un nuevo juego con la dificultad seleccionada
     fun iniciarJuego(dificultad: Dificultad) {
         this.dificultad = dificultad
         juego.resetIntentos(dificultad)
@@ -55,6 +56,7 @@ class JuegoViewModel : ViewModel() {
         _imagenesAcertadas.value = emptyList()
     }
 
+    // Obtener las imágenes según la dificultad seleccionada
     fun obtenerImagenesSegunDificultad(dificultad: Dificultad?): List<Imagen> {
         return when (dificultad) {
             Dificultad.FACIL -> imagenesFacil
@@ -63,6 +65,7 @@ class JuegoViewModel : ViewModel() {
         }
     }
 
+    // Procesar un intento del usuario y actualizar la puntuación e intentos restantes
     fun procesarIntento(acierto: Boolean, imagen: Imagen) {
         juego.registrarIntento(acierto, imagen)
         _intentos.value = juego.obtenerIntentosRestantes()
@@ -72,12 +75,17 @@ class JuegoViewModel : ViewModel() {
         }
     }
 
+    // Verificar si el juego ha terminado
     fun juegoTerminado(): Boolean {
         return _intentos.value == 0
     }
+
+    // Verificar si una imagen ya ha sido acertada
     fun imagenYaAcertada(imagen: Imagen): Boolean {
         return juego.imagenYaAcertada(imagen)
     }
+
+    // Agregar una imagen acertada al juego y actualizar la lista de imágenes acertadas
     fun agregarImagenAcertada(imagen: Imagen) {
         Log.e("JuegoViewModel", "Intentando agregar imagen: ${imagen.nombre}")
 
@@ -90,6 +98,7 @@ class JuegoViewModel : ViewModel() {
             Log.e("JuegoViewModel", "La imagen ya estaba en la lista.")
         }
     }
+
     fun calcularDistancia(p1: GeoPoint, p2: GeoPoint): Double {
         // Formula de Haversine para calcular la distancia entre dos puntos
         val r = 6371000
@@ -103,6 +112,7 @@ class JuegoViewModel : ViewModel() {
 
         return r * c
     }
+
     fun createCircle(center: GeoPoint): Polygon {
         val radius= when(dificultad)
         {
@@ -124,7 +134,6 @@ class JuegoViewModel : ViewModel() {
                 else -> false
             }
     }
-
     fun getDificultad(): Dificultad? {
         return dificultad
     }
