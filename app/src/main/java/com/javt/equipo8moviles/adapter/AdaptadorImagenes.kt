@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.javt.equipo8moviles.R
 import com.javt.equipo8moviles.holder.ImagenesViewHolder
 import com.javt.equipo8moviles.model.Imagen
+import com.javt.equipo8moviles.view.fragments.MapFragment
 
 class AdaptadorImagenes(private val imagenes: List<Imagen>,
                         private val fragmentManager: FragmentManager,
@@ -29,11 +30,13 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>,
     override fun onBindViewHolder(holder: ImagenesViewHolder,
                                   position: Int) {
         // Eliminar el fragment, no funciona al volver a un estado anterior
+        /*
         val fragment = fragmentManager.findFragmentById(R.id.fragmentContainer)
-        Log.e("AdaptadorImagenes", "Fragment: $fragment")
         if (fragment != null) {
+            Log.d("AdaptadorImagenes", "Eliminando fragment existente")
             fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
-        }
+        }*/
+
         // Inicializamos la lista de imagenes
         val imagenName = data[holder.adapterPosition]
         //accedo al imageView, por el nombre
@@ -51,6 +54,10 @@ class AdaptadorImagenes(private val imagenes: List<Imagen>,
             onImageClick(imagenName) // Llamamos a la función de callback con la imagen seleccionada
         }
     }
+    fun obtenerImagen(position: Int): Imagen? {
+        return if (position in data.indices) data[position] else null
+    }
+
 
     override fun getItemCount(): Int {
         return data.size

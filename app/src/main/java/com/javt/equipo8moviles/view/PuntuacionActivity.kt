@@ -22,10 +22,11 @@ class PuntuacionActivity : AppCompatActivity() {
         setContentView(binding.root)
         prefs = getSharedPreferences("JuegoPrefs", Context.MODE_PRIVATE)
         val mejorPuntuacion = prefs.getInt("mejor_puntuacion", 0)
-
+        // Obtengo las imagenes acertadas y la puntuacion del intent
         imagenesAcertadas = intent.getSerializableExtra("imagenesAcertadas") as? ArrayList<Imagen> ?: arrayListOf()
         val puntuacion = intent.getIntExtra("puntuacion", 0)
         if (puntuacion > mejorPuntuacion) {
+            // Actualizar la mejor puntuación en las preferencias
             with(prefs.edit()) {
                 putInt("mejor_puntuacion", puntuacion)
                 apply()

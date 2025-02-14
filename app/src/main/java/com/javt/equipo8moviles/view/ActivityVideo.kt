@@ -17,15 +17,18 @@ class ActivityVideo : AppCompatActivity() {
         binding = ActivityContenedorVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Configurar controles del video
         val mediaControls = MediaController(this)
         mediaControls.setAnchorView(binding.vv)
         binding.vv.setMediaController(mediaControls)
 
+        // Obtener el nombre del video y la imagen a mostrar
         val nombreVideo = intent.getStringExtra("nombreVideo")
         val nombreImagen = intent.getStringExtra("nombreImagen")
         val videoResId = resources.getIdentifier(nombreVideo, "raw", packageName)
         binding.vv.setZOrderOnTop(true) // Para que los controles del video se muestren por encima de otros elementos
 
+        // Si se encontró el video, mostrarlo y configurar los botones
         if (videoResId != 0) {
             binding.txtVideos.text = nombreImagen
             binding.vv.setVideoURI(Uri.parse("android.resource://$packageName/$videoResId"))
@@ -35,6 +38,7 @@ class ActivityVideo : AppCompatActivity() {
                 mediaPlayer.setScreenOnWhilePlaying(true) // Mantener la pantalla encendida
             }
         } else {
+            // Si no se encontró el video, mostrar un mensaje en su lugar y deshabilitar los botones
             binding.txtVideos.text = getString(R.string.pantalla_en_construccion)
             binding.botPlay.isEnabled = false
             binding.botPausar.isEnabled = false

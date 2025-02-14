@@ -55,12 +55,14 @@
             _binding = FragmentMapBinding.inflate(inflater, container, false)
             val view = binding.root
             mapView = binding.mapView
+            // Obtener las preferencias de la aplicación
             prefs=requireActivity().getSharedPreferences("JuegoPrefs", Context.MODE_PRIVATE)
             setupMap()
             return view
         }
 
         private fun setupMap() {
+            // Configurar el mapa de OpenStreetMap
             Configuration.getInstance().load(requireContext(), requireActivity().getPreferences(0))
             mapView.setTileSource(TileSourceFactory.OpenTopo) // estilo de mapa, tarda un poco mas en cargar que el mapa por defecto
             mapView.setMultiTouchControls(true)
@@ -69,7 +71,6 @@
             val mapController = mapView.controller
             mapController.setZoom(6.8)
             mapController.setCenter(GeoPoint(40.4168, -3.7038)) // Madrid, España
-
             mapView.overlays.add(MapEventsOverlay(this))
 
             // Obtener el nombre imagen actual a partir de los argumentos
@@ -79,6 +80,7 @@
 
             // Verificar si la imagen ya ha sido acertada
             if (imagenActual != null && viewModel.imagenYaAcertada(imagenActual!!)) {
+                // Si la imagen ya fue acertada, mostrar un mensaje y cerrar el fragmento
                 Toast.makeText(requireContext(), getString(R.string.ya_acertaste_esta_imagen), Toast.LENGTH_SHORT).show()
                 requireActivity().supportFragmentManager.beginTransaction()
                     .remove(this@MapFragment)
@@ -117,7 +119,7 @@
             // Registrar el intento en el ViewModel y actualizar la UI
             viewModel.procesarIntento(acierto,  imagenActual!!)
 
-            requireActivity().runOnUiThread {
+            // Mostrar un mensaje al usuario dependiendo del resultado del intento y actualizar la UI
                 val mensaje = if (acierto) {
                     // Mueve la cámara al punto de la imagen
                     val puntoAcierto = GeoPoint(imagenActual!!.latitud, imagenActual!!.longitud)
@@ -143,8 +145,10 @@
                     val intent = Intent(requireContext(), PuntuacionActivity::class.java)
                     intent.putExtra("imagenesAcertadas", ArrayList(viewModel.imagenesAcertadas.value ?: emptyList()))
                     intent.putExtra("puntuacion", viewModel.puntuacion.value ?: 0)
+                    // Comprueba si se han acertado todas las imagenes
                     val tamaniolista=viewModel.obtenerImagenesSegunDificultad(viewModel.getDificultad()).size
                     val tamanioAcertadas=viewModel.imagenesAcertadas.value?.size?:0
+                    // Si se han acertado todas las imagenes, reproduce el sonido
                     if(tamanioAcertadas==tamaniolista){
                         sonido();
                     }
@@ -153,7 +157,6 @@
                     // Cierra la actividad de PantallaImagenes y vuelve a la principal
                     requireActivity().finish()
                 }
-            }
 
             mapView.invalidate()
 
@@ -193,7 +196,9 @@
             _binding = null
         }
         private fun sonido() {
+            // Comprueba si el sonido esta activado
            val reproducir=prefs.getBoolean("isMuted",false)
+            // Si esta activado, reproduce el sonido
             if(!reproducir){
                 mediaPlayer= MediaPlayer.create(requireContext(),R.raw.sonidowin)
                 mediaPlayer.start()
